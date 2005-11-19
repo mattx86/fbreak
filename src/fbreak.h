@@ -32,10 +32,15 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
 
+#define VERSION "-0.1b"
 
-#define FILE_OUT_EXT "prt"
-#define FILE_OUT_SIZE (int) (1000 * 1440)
+#define OUTPUT_FILE_EXT "-part"
+#define OUTPUT_FILE_SIZE (int) (1000 * 1440)
 
+#ifndef true
+	#define true 1
+	#define false 0
+#endif
 
 typedef unsigned int uint;
 typedef unsigned char byte;
