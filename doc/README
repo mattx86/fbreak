@@ -1,0 +1,41 @@
+
+Introduction
+
+	fbreak is a console application that allows you break large files
+	into multiple smaller files (ie, for distribution on floppy disks).
+
+Usage
+
+	fbreak [-r] [-v] file
+
+	    -r parts        rebuild file from parts
+	    -v              verify integrity (to-do)
+
+Examples
+
+	Breaking a file into parts:
+		fbreak antivirus-signatures-full-20051115.exe
+	This breaks this particular file into 4 files:
+	 * antivirus-signatures-full-20051115.exe-part1 (1.40 MB)
+	 * antivirus-signatures-full-20051115.exe-part2 (1.40 MB)
+	 * antivirus-signatures-full-20051115.exe-part3 (1.40 MB)
+	 * antivirus-signatures-full-20051115.exe-part4 ( 107 KB)
+	
+	Rebuilding a file from parts:
+		fbreak -r 4 antivirus-signatures-full-20051115.exe
+	Notice how we specify how many parts and the original filename.
+	Right now the code is taking your word for how many parts are
+	there;  this may or may not change in the future.
+
+To-Do
+
+	* generate an MD5 sum file for parts and/or the original/rebuilt
+	  (the MD5 sum code is already in place;  we just need it to
+	   generate the MD5 sum file and implement verification of it)
+	* possibly incorporate zlib to accomplish getting more data on
+	  fewer floppy disks
+
+License
+
+	See file "doc/COPYING"
+
