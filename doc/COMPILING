@@ -1,0 +1,18 @@
+Windows, Visual C++ .NET 2003
+-----------------------------
+1. Open fbreak.sln
+2. Select "Build"
+3. Click "Build fbreak"
+4. Look in .\Release\ sub-folder for fbreak.exe
+
+
+UNIX, g++
+---------
+1. cd src/
+2. g++ fbreak.c -o fbreak
+3. You now have the binary "fbreak"
+
+(The code is actually C, but the fmod() function that it uses
+is a C++ function; hence the need to compile it with g++ for
+now.)
+

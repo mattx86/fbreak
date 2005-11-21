@@ -37,6 +37,10 @@ To-Do
 	* possibly incorporate zlib to accomplish getting more data on
 	  fewer floppy disks
 
+Compiling
+
+	See file "doc/COMPILING"
+
 Changes
 
 	See file "doc/CHANGES"
