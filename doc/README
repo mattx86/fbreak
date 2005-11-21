@@ -6,15 +6,20 @@ Introduction
 
 Usage
 
-	fbreak [-r] [-v] file
+	fbreak [-r] [-v] [sizeX] file
 
-	    -r parts        rebuild file from parts
+	    -r              rebuild file from parts
 	    -v              verify integrity (to-do)
+
+	    sizeX           break size (X=B,K,M,G  default size: ~1.4M)
+	    file            file to break or rebuild
+
+	default action is to break file
 
 Examples
 
 	Breaking a file into parts:
-		fbreak antivirus-signatures-full-20051115.exe
+	    fbreak 1.4M antivirus-signatures-full-20051115.exe
 	This breaks this particular file into 4 files:
 	 * antivirus-signatures-full-20051115.exe-part1 (1.40 MB)
 	 * antivirus-signatures-full-20051115.exe-part2 (1.40 MB)
@@ -22,10 +27,7 @@ Examples
 	 * antivirus-signatures-full-20051115.exe-part4 ( 107 KB)
 	
 	Rebuilding a file from parts:
-		fbreak -r 4 antivirus-signatures-full-20051115.exe
-	Notice how we specify how many parts and the original filename.
-	Right now the code is taking your word for how many parts are
-	there;  this may or may not change in the future.
+	    fbreak -r antivirus-signatures-full-20051115.exe-part1
 
 To-Do
 
@@ -34,6 +36,10 @@ To-Do
 	   generate the MD5 sum file and implement verification of it)
 	* possibly incorporate zlib to accomplish getting more data on
 	  fewer floppy disks
+
+Changes
+
+	See file "doc/CHANGES"
 
 License
 

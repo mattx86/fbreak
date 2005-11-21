@@ -32,10 +32,11 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
 
-#define VERSION "-0.1b"
+#define VERSION "-0.2"
 
-#define OUTPUT_FILE_EXT "-part"
-#define OUTPUT_FILE_SIZE (int) (1000 * 1440)
+#define PARTS_EXT "-part"
+#define PARTS_MAX 100
+#define PARTS_DEFAULT_SIZE (long) (1024 * 1024 * 1.39)
 
 #ifndef true
 	#define true 1

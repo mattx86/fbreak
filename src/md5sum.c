@@ -28,10 +28,12 @@
  */
 
 
+#if 0
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "fbreak.h"
+
 
 /*
  *	Rotate amounts used in the algorithm
@@ -336,3 +338,4 @@ decode(uint *output, byte *input, uint len)
 		*output++ = input[0] | (input[1] << 8) |
 			(input[2] << 16) | (input[3] << 24);
 }
+#endif
