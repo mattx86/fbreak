@@ -81,7 +81,7 @@ int main(int argp, char **argc) {
 			} else { // default: Bytes (B)
 				if ( m == 'B' )
 					*p = 0;
-                breaksize = atol(argc[i]);
+				breaksize = atol(argc[i]);
 			}
 		}
 		else if ( i == (argp - 1) ) // trailing option
@@ -105,7 +105,7 @@ int main(int argp, char **argc) {
 		rewind (fp_if);
 
 		// figure up the number of file breaks
-		fbreaks = (int) ( (fmodl(fsize, breaksize) > 0) ? (fsize / breaksize)+1 : (fsize / breaksize) );
+		fbreaks = (int) ( (fmod(fsize, breaksize) > 0) ? (fsize / breaksize)+1 : (fsize / breaksize) );
 
 		// allocate memory for input file
 		p = (char *) malloc (fsize);
