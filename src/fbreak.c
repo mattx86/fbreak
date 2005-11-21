@@ -41,19 +41,22 @@ POSSIBILITY OF SUCH DAMAGE.
 
 int main(int argp, char **argc) {
 	int opt_r, opt_v;
-	FILE *fp_if, *fp_of;
-	int i, fbreaks, fstart, fend, fget;
+	int i, fbreaks;
+	long fsize, fstart, fend, fget, breaksize = PARTS_DEFAULT_SIZE;
 	char buf[128], fn[128], *p, *p2p, *outbuf;
-	long fsize, breaksize = PARTS_DEFAULT_SIZE;
+	FILE *fp_if, *fp_of;
 
 	if ( argp < 2 ) {
 		printf ("fbreak%s, Copyright (c) 2005, Matt Smith\n", VERSION);
-		printf ("default action is to break file\n\n");
-		printf ("syntax: %s [-r] [-v] [sizeX] file\n\n", argc[0]);
+		printf ("syntax: %s [-r] [-v] [sizeX] file\n", argc[0]);
 		printf ("\t-r\t\trebuild file from parts\n");
 		printf ("\t-v\t\tverify integrity (to-do)\n\n");
-		printf ("\tsizeX\t\tbreak size (X=B,K,M,G  default size: ~1.4M)\n");
-		printf ("\tfile\t\tfile to break or rebuild\n");
+		printf ("\tsizeX\t\tbreak size (X=B,K,M,G)\n");
+		printf ("\tfile\t\tfile to break or rebuild\n\n");
+		printf ("* break size: 1.39MiB if not specified;\n");
+		printf ("  if size is specified but X is not, Bytes\n");
+		printf ("  will be used\n");
+		printf ("* default action: break file into parts\n");
 
 		return 1;
 	}
@@ -81,7 +84,7 @@ int main(int argp, char **argc) {
 			} else { // default: Bytes (B)
 				if ( m == 'B' )
 					*p = 0;
-				breaksize = atol(argc[i]);
+				breaksize = atol(breaksize_s);
 			}
 		}
 		else if ( i == (argp - 1) ) // trailing option
@@ -135,7 +138,7 @@ int main(int argp, char **argc) {
 			fstart = fend - breaksize;
 			
 			p2p = p + fstart;
-			fget = (( ((int)fsize - fstart) >= breaksize ) ? breaksize : ((int)fsize - fstart) );
+			fget = (( (fsize - fstart) >= breaksize ) ? breaksize : (fsize - fstart) );
 			outbuf = (char *) malloc (fget);
 			if (outbuf == NULL) {
 				printf ("error: failed to allocate %i bytes for output\n", fget);
@@ -156,7 +159,7 @@ int main(int argp, char **argc) {
 	else
 	{
 
-        // remove "-partN" from filename
+		// remove "-partN" from filename
 		if ( strstr (fn, PARTS_EXT) != NULL ) {
 			p = strrchr(fn, '-');
 			*p = 0;

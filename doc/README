@@ -11,10 +11,12 @@ Usage
 	    -r              rebuild file from parts
 	    -v              verify integrity (to-do)
 
-	    sizeX           break size (X=B,K,M,G  default size: ~1.4M)
+	    sizeX           break size (X=B,K,M,G)
 	    file            file to break or rebuild
 
-	default action is to break file
+	* break size: default is 1.39M; if size is
+	  specified but X is not, Bytes will be used
+	* default action: break file into parts
 
 Examples
 
@@ -31,6 +33,8 @@ Examples
 
 To-Do
 
+	* check that the breaksize is not larger than the fsize
+	* have it do 16MiB memory breaks
 	* generate an MD5 sum file for parts and/or the original/rebuilt
 	  (the MD5 sum code is already in place;  we just need it to
 	   generate the MD5 sum file and implement verification of it)

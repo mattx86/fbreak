@@ -1,3 +1,8 @@
+Changes from 0.2 to 0.2.1
+-------------------------
+* minor clean up / bug fix
+
+
 Changes from 0.1b to 0.2
 ------------------------
 * Break size can now be set with the size parameter; previously it was
