@@ -1,0 +1,22 @@
+Changes from 0.1b to 0.2
+------------------------
+* Break size can now be set with the size parameter; previously it was
+  hard-coded at around 1.4MiB.  You can specify 'B' (Bytes), 'K' (Kibibytes),
+  'M' (Mebibytes), or 'G' (Gibibytes).
+
+  The break size parameter is *not* required for rebuilding (in fact,
+  it's not even used for rebuilding).
+  
+* The parts parameter to the "-r" rebuild option has been removed; it
+  now uses a hard-coded max of 100 parts.  (I figured this would be a
+  good amount.. hopefully you'll never use that many parts for distri-
+  bution. :-)
+  
+* When rebuilding a file, you can specify either the first part or the
+  original filename.
+  
+  ie:
+    fbreak -r myfile.zip-part1
+  or
+    fbreak -r myfile.zip
+
