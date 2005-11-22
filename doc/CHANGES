@@ -1,6 +1,15 @@
 Changes from 0.2 to 0.2.1
 -------------------------
-* minor clean up / bug fix
+* Replaced fmod() with good ole math -- fbreak can now be compiled as
+  C code with gcc, instead of previously with g++.  I would've done it
+  this way the first time, but I couldn't figure out how to get it to
+  return a float (or long double as is the case now).
+  
+* Added a sanity check to make sure that breaksize is smaller than the
+  file size, and that breaksize and the file size are greater-than 0.
+  
+* Some minor clean-ups, a change in some variable types, and a possible
+  bug-fix if the breaksize specified was in bytes.
 
 
 Changes from 0.1b to 0.2

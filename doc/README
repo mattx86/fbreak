@@ -33,7 +33,6 @@ Examples
 
 To-Do
 
-	* check that the breaksize is not larger than the fsize
 	* have it do 16MiB memory breaks
 	* generate an MD5 sum file for parts and/or the original/rebuilt
 	  (the MD5 sum code is already in place;  we just need it to

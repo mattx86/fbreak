@@ -36,13 +36,12 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include "fbreak.h"
 
-int main(int argp, char **argc) {
-	int opt_r, opt_v;
-	int i, fbreaks;
-	long fsize, fstart, fend, fget, breaksize = PARTS_DEFAULT_SIZE;
+int main(unsigned int argp, char **argc) {
+	unsigned int opt_r, opt_v;
+	unsigned int i, fbreaks;
+	unsigned long fsize, fstart, fend, fget, breaksize = PARTS_DEFAULT_SIZE;
 	char buf[128], fn[128], *p, *p2p, *outbuf;
 	FILE *fp_if, *fp_of;
 
@@ -52,11 +51,7 @@ int main(int argp, char **argc) {
 		printf ("\t-r\t\trebuild file from parts\n");
 		printf ("\t-v\t\tverify integrity (to-do)\n\n");
 		printf ("\tsizeX\t\tbreak size (X=B,K,M,G)\n");
-		printf ("\tfile\t\tfile to break or rebuild\n\n");
-		printf ("* break size: 1.39MiB if not specified;\n");
-		printf ("  if size is specified but X is not, Bytes\n");
-		printf ("  will be used\n");
-		printf ("* default action: break file into parts\n");
+		printf ("\tfile\t\tfile to break or rebuild\n");
 
 		return 1;
 	}
@@ -107,8 +102,16 @@ int main(int argp, char **argc) {
 		fsize = ftell (fp_if);
 		rewind (fp_if);
 
+		// sanity check
+		if ( breaksize >= fsize || breaksize == 0 || fsize == 0 ) {
+			printf ("error: either \"%s\" is empty or the break size (%lB)\nis larger than this file (%lB)\n", fn, breaksize, fsize);
+			return 1;
+		}
+
 		// figure up the number of file breaks
-		fbreaks = (int) ( (fmod(fsize, breaksize) > 0) ? (fsize / breaksize)+1 : (fsize / breaksize) );
+		fbreaks = (int) (fsize/breaksize);
+		if ( fbreaks < ((long double)fsize/(long double)breaksize) )
+			fbreaks++;
 
 		// allocate memory for input file
 		p = (char *) malloc (fsize);

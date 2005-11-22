@@ -36,7 +36,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #define PARTS_EXT "-part"
 #define PARTS_MAX 100
-#define PARTS_DEFAULT_SIZE (long) (1024 * 1024 * 1.39)
+#define PARTS_DEFAULT_SIZE (unsigned long) (1024 * 1024 * 1.39)
 
 #ifndef true
 	#define true 1
