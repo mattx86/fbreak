@@ -5,8 +5,15 @@ Changes from 0.2 to 0.2.1
   this way the first time, but I couldn't figure out how to get it to
   return a float (or long double as is the case now).
   
+* Replaced the use of fat buffer to hold the entire file upon breaking.
+  Now uses fseek() and fread() -- memory allocation for breaking a file
+  is now limited only to the breaksize, instead of the breaksize plus
+  the total file size as before.
+  
 * Added a sanity check to make sure that breaksize is smaller than the
   file size, and that breaksize and the file size are greater-than 0.
+  
+* Removed md5sum.c and md5 verification option (keep things simple).
   
 * Some minor clean-ups, a change in some variable types, and a possible
   bug-fix if the breaksize specified was in bytes.
