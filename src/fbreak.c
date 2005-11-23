@@ -39,30 +39,26 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "fbreak.h"
 
 int main(int argp, char **argc) {
-	int opt_r, opt_v;
+	int opt_r;
 	int i, fbreaks;
 	long int fsize, fstart, fend, fget, breaksize = PARTS_DEFAULT_SIZE;
 	char buf[128], fn[128], *p, *outbuf;
-	FILE *fp_if, *fp_of, *fp2fp;
+	FILE *fp_if, *fp_of;
 
 	if ( argp < 2 ) {
 		printf ("fbreak%s, Copyright (c) 2005, Matt Smith\n", VERSION);
-		printf ("syntax: %s [-r] [-v] [sizeX] file\n", argc[0]);
-		printf ("\t-r\t\trebuild file from parts\n");
-		printf ("\t-v\t\tverify integrity (to-do)\n\n");
+		printf ("syntax: %s [-r] [sizeX] file\n", argc[0]);
+		printf ("\t-r\t\trebuild file from parts\n\n");
 		printf ("\tsizeX\t\tbreak size (X=B,K,M,G)\n");
 		printf ("\tfile\t\tfile to break or rebuild\n");
 
 		return 1;
 	}
 
-	opt_r = opt_v = false;
+	opt_r = false;
 	for (i = 0; i < argp; i++) {
 		if ( !strcmp ("-r", argc[i]) && !opt_r ) {
 			opt_r = true;
-		}
-		else if ( !strcmp ("-v", argc[i]) && !opt_v ) {
-			opt_v = true;
 		}
 		else if ( argp >= 3 && i == (argp - 2) && !opt_r) { // next-to-last option
 			char breaksize_s[32], m;
@@ -197,9 +193,9 @@ int main(int argp, char **argc) {
 			fclose(fp_if);
 			free (p);
 		}
-		fclose (fp_of);
 
 		printf ("done.\n");
+		fclose (fp_of);
 	}
 
 	return 0;
