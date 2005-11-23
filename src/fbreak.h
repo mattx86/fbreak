@@ -42,16 +42,3 @@ POSSIBILITY OF SUCH DAMAGE.
 	#define true 1
 	#define false 0
 #endif
-
-typedef unsigned int uint;
-typedef unsigned char byte;
-typedef struct MD5state
-{
-	uint len;
-	uint state[4];
-}MD5state;
-
-void encode(byte*, uint*, uint);
-void decode(uint*, byte*, uint);
-MD5state* md5(byte*, uint, byte*, MD5state*);
-char *sum(FILE*, char*);

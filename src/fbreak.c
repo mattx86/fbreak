@@ -38,12 +38,12 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include "fbreak.h"
 
-int main(unsigned int argp, char **argc) {
-	unsigned int opt_r, opt_v;
-	unsigned int i, fbreaks;
-	unsigned long fsize, fstart, fend, fget, breaksize = PARTS_DEFAULT_SIZE;
-	char buf[128], fn[128], *p, *p2p, *outbuf;
-	FILE *fp_if, *fp_of;
+int main(int argp, char **argc) {
+	int opt_r, opt_v;
+	int i, fbreaks;
+	long int fsize, fstart, fend, fget, breaksize = PARTS_DEFAULT_SIZE;
+	char buf[128], fn[128], *p, *outbuf;
+	FILE *fp_if, *fp_of, *fp2fp;
 
 	if ( argp < 2 ) {
 		printf ("fbreak%s, Copyright (c) 2005, Matt Smith\n", VERSION);
@@ -71,15 +71,15 @@ int main(unsigned int argp, char **argc) {
 			m = *p;
 
 			if ( m == 'G' ) { // Gibibytes (GiB)
-				*p = 0; breaksize = (long) (atof(breaksize_s) * 1024 * 1024 * 1024);
+				*p = 0; breaksize = labs( ((long int) (atof(breaksize_s) * 1024 * 1024 * 1024)) );
 			} else if ( m == 'M' ) { // Mebibytes (MiB)
-				*p = 0; breaksize = (long) (atof(breaksize_s) * 1024 * 1024);
+				*p = 0; breaksize = labs( ((long int) (atof(breaksize_s) * 1024 * 1024)) );
 			} else if ( m == 'K' ) { // Kibibytes (KiB)
-				*p = 0; breaksize = (long) (atof(breaksize_s) * 1024);
+				*p = 0; breaksize = labs( ((long int) (atof(breaksize_s) * 1024)) );
 			} else { // default: Bytes (B)
 				if ( m == 'B' )
 					*p = 0;
-				breaksize = atol(breaksize_s);
+				breaksize = labs( ((long int) atol(breaksize_s)) );
 			}
 		}
 		else if ( i == (argp - 1) ) // trailing option
@@ -104,7 +104,7 @@ int main(unsigned int argp, char **argc) {
 
 		// sanity check
 		if ( breaksize >= fsize || breaksize == 0 || fsize == 0 ) {
-			printf ("error: either \"%s\" is empty or the break size (%lB)\nis larger than this file (%lB)\n", fn, breaksize, fsize);
+			printf ("error: either \"%s\" is empty or the break size (%i B)\nis larger than this file (%i B)\n", fn, breaksize, fsize);
 			return 1;
 		}
 
@@ -112,17 +112,6 @@ int main(unsigned int argp, char **argc) {
 		fbreaks = (int) (fsize/breaksize);
 		if ( fbreaks < ((long double)fsize/(long double)breaksize) )
 			fbreaks++;
-
-		// allocate memory for input file
-		p = (char *) malloc (fsize);
-		if (p == NULL) {
-			printf ("error: failed to allocate %l bytes for input\n", fsize);
-			return 2;
-		}
-		
-		// store it in our buffer and close file
-		fread (p, 1, fsize, fp_if);
-		fclose (fp_if);
 		
 		printf ("breaking \"%s\" into %i parts...\n", fn, fbreaks);
 
@@ -140,22 +129,22 @@ int main(unsigned int argp, char **argc) {
 			fend = breaksize * i;
 			fstart = fend - breaksize;
 			
-			p2p = p + fstart;
+			fseek (fp_if, fstart, SEEK_SET);
 			fget = (( (fsize - fstart) >= breaksize ) ? breaksize : (fsize - fstart) );
 			outbuf = (char *) malloc (fget);
 			if (outbuf == NULL) {
 				printf ("error: failed to allocate %i bytes for output\n", fget);
 				return 2;
 			}
-			memcpy (outbuf, p2p, fget);
-			
+			fread (outbuf, 1, fget, fp_if);
 			fwrite (outbuf, 1, fget, fp_of);
+
 			fclose (fp_of);
 			free (outbuf);
 		}
-		free (p);
 
 		printf ("done.\n");
+		fclose (fp_if);
 	}
 
 	// rebuild file from parts
