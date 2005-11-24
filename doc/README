@@ -29,7 +29,10 @@ Examples
 	 * antivirus-signatures-full-20051115.exe-part4 ( 107 KB)
 	
 	Rebuilding a file from parts:
+	You can specify either the first part file
 	    fbreak -r antivirus-signatures-full-20051115.exe-part1
+	or the original file name..
+	    fbreak -r antivirus-signatures-full-20051115.exe
 
 To-Do
 
