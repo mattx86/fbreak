@@ -9,8 +9,11 @@ Windows, Visual C++ .NET 2003
 UNIX, gcc
 ---------
 1. cd src/
-2. gcc fbreak.c -o fbreak
+2. gcc -O2 fbreak.c -o fbreak
 3. If all goes well, you should now have the binary "fbreak"
 
 As of version 0.2.1, I've replaced the usage of fmod() with
 good ole math -- fbreak can now be compiled as C code with gcc.
+
+As of version 0.2.2, release optimizations have been checked
+and tested.
