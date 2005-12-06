@@ -1,3 +1,10 @@
+Changes from 0.2.1 to 0.2.2
+---------------------------
+* Added the block size option ("-b"), with a default block size of
+  512 bytes.  You no longer need as much free RAM as the *break size*
+  you've set - only as much free RAM as the block size you've set!
+
+
 Changes from 0.2 to 0.2.1
 -------------------------
 * Replaced fmod() with good ole math -- fbreak can now be compiled as

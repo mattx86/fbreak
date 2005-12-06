@@ -6,13 +6,18 @@ Introduction
 
 Usage
 
-	fbreak [-r] [sizeX] file
+	fbreak [-b blocksizeX] [breaksizeX] file
+	fbreak [-b blocksizeX] -r file
 
+	    -b blocksizeX   block size (X=B,K,M,G)
 	    -r              rebuild file from parts
-
-	    sizeX           break size (X=B,K,M,G)
+	    breaksizeX      break size (X=B,K,M,G)
 	    file            file to break or rebuild
 
+
+	* block size: optional - default is 512B.
+	  if size is specified but X is not, Bytes
+	  will be used
 	* break size: optional - default is 1.39M.
 	  if size is specified but X is not, Bytes
 	  will be used
@@ -36,8 +41,7 @@ Examples
 
 To-Do
 
-	* possibly have it do 'memory breaks', because as it is now,
-	  you need as much free RAM as the break size you've set.
+	Nothing for now.
 
 Compiling
 

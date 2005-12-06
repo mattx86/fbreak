@@ -32,13 +32,16 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
 
-#define VERSION "-0.2.1"
+#define VERSION "-0.2.2"
 
 #define PARTS_EXT "-part"
 #define PARTS_MAX 100
-#define PARTS_DEFAULT_SIZE (unsigned long) (1024 * 1024 * 1.39)
+#define PARTS_DEFAULT_BREAKSIZE (long) (1024 * 1024 * 1.39)
+#define PARTS_DEFAULT_BLOCKSIZE (long) 512
 
 #ifndef true
 	#define true 1
 	#define false 0
 #endif
+
+extern long fsize_bytes (char *str);

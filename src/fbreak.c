@@ -39,44 +39,39 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "fbreak.h"
 
 int main(int argp, char **argc) {
-	int opt_r;
+	int opt_b, opt_r;
 	int i, fbreaks;
-	long int fsize, fstart, fend, fget, breaksize = PARTS_DEFAULT_SIZE;
-	char buf[128], fn[128], *p, *outbuf;
+	long fsize, fstart, fend, fget, b, bget, breaksize = PARTS_DEFAULT_BREAKSIZE, blocksize = PARTS_DEFAULT_BLOCKSIZE;
+	char buf[128], fn[128], *p;
 	FILE *fp_if, *fp_of;
 
 	if ( argp < 2 ) {
 		printf ("fbreak%s, Copyright (c) 2005, Matt Smith\n", VERSION);
-		printf ("syntax: %s [-r] [sizeX] file\n", argc[0]);
-		printf ("\t-r\t\trebuild file from parts\n\n");
-		printf ("\tsizeX\t\tbreak size (X=B,K,M,G)\n");
+		printf ("syntax: %s [-b blocksizeX] [breaksizeX] file\n", argc[0]);
+		printf ("        %s [-b blocksizeX] -r file\n\n", argc[0]);
+		printf ("\t-b blocksizeX\tblock size (X=B,K,M,G)\n");
+		printf ("\t-r\t\trebuild file from parts\n");
+		printf ("\tbreaksizeX\tbreak size (X=B,K,M,G)\n");
 		printf ("\tfile\t\tfile to break or rebuild\n");
 
 		return 1;
 	}
 
-	opt_r = false;
+	opt_b = opt_r = false;
 	for (i = 0; i < argp; i++) {
-		if ( !strcmp ("-r", argc[i]) && !opt_r ) {
+		if ( !strcmp ("-b", argc[i]) && !opt_b ) {
+			char blocksize_s[32];
+			strcpy (blocksize_s, argc[++i]);
+			blocksize = fsize_bytes (blocksize_s);
+			opt_b = true;
+		}
+		else if ( !strcmp ("-r", argc[i]) && !opt_r ) {
 			opt_r = true;
 		}
 		else if ( argp >= 3 && i == (argp - 2) && !opt_r) { // next-to-last option
-			char breaksize_s[32], m;
+			char breaksize_s[32];
 			strcpy (breaksize_s, argc[i]);
-			p = breaksize_s + strlen(breaksize_s)-1;
-			m = *p;
-
-			if ( m == 'G' ) { // Gibibytes (GiB)
-				*p = 0; breaksize = labs( ((long int) (atof(breaksize_s) * 1024 * 1024 * 1024)) );
-			} else if ( m == 'M' ) { // Mebibytes (MiB)
-				*p = 0; breaksize = labs( ((long int) (atof(breaksize_s) * 1024 * 1024)) );
-			} else if ( m == 'K' ) { // Kibibytes (KiB)
-				*p = 0; breaksize = labs( ((long int) (atof(breaksize_s) * 1024)) );
-			} else { // default: Bytes (B)
-				if ( m == 'B' )
-					*p = 0;
-				breaksize = labs( ((long int) atol(breaksize_s)) );
-			}
+			breaksize = fsize_bytes (breaksize_s);
 		}
 		else if ( i == (argp - 1) ) // trailing option
 			strcpy(fn, argc[i]);
@@ -106,7 +101,7 @@ int main(int argp, char **argc) {
 
 		// figure up the number of file breaks
 		fbreaks = (int) (fsize/breaksize);
-		if ( fbreaks < ((long double)fsize/(long double)breaksize) )
+		if ( fbreaks < ((double)fsize/(double)breaksize) )
 			fbreaks++;
 		
 		printf ("breaking \"%s\" into %i parts...\n", fn, fbreaks);
@@ -127,16 +122,21 @@ int main(int argp, char **argc) {
 			
 			fseek (fp_if, fstart, SEEK_SET);
 			fget = (( (fsize - fstart) >= breaksize ) ? breaksize : (fsize - fstart) );
-			outbuf = (char *) malloc (fget);
-			if (outbuf == NULL) {
-				printf ("error: failed to allocate %i bytes for output\n", fget);
-				return 2;
+			b = 0;
+			while (b != fget) {
+				bget = ((blocksize > (fget - b)) ? (fget - b) : blocksize);
+				p = (char *) malloc (bget);
+				if (p == NULL) {
+					printf ("error: failed to allocate %i bytes for output\n", bget);
+					return 2;
+				}
+				fread (p, 1, bget, fp_if);
+				fwrite(p, 1, bget, fp_of);
+				free  (p);
+				b += bget;
+				fseek (fp_if, (fstart + b), SEEK_SET);
 			}
-			fread (outbuf, 1, fget, fp_if);
-			fwrite (outbuf, 1, fget, fp_of);
-
 			fclose (fp_of);
-			free (outbuf);
 		}
 
 		printf ("done.\n");
@@ -180,18 +180,22 @@ int main(int argp, char **argc) {
 			fsize = ftell (fp_if);
 			rewind (fp_if);
 
-			// allocate memory for input file
-			p = (char *) malloc (fsize);
-			if (p == NULL) {
-				printf ("error: failed to allocate %l bytes for input\n", fsize);
-				return 2;
+			b = 0;
+			while (b != fsize) {
+				bget = ((blocksize > (fsize - b)) ? (fsize - b) : blocksize );
+				p = (char *) malloc (bget);
+				if (p == NULL) {
+					printf ("error: failed to allocate %l bytes for input\n", bget);
+					return 2;
+				}
+				
+				fread (p, 1, bget, fp_if);
+				fwrite(p, 1, bget, fp_of);
+				free  (p);
+				b += bget;
+				fseek (fp_if, b, SEEK_SET);
 			}
-			
-			// store it in our buffer, write it, close input file, free buffer memory
-			fread (p, 1, fsize, fp_if);
-			fwrite(p, 1, fsize, fp_of);
 			fclose(fp_if);
-			free (p);
 		}
 
 		printf ("done.\n");
@@ -199,4 +203,26 @@ int main(int argp, char **argc) {
 	}
 
 	return 0;
+}
+
+long fsize_bytes (char *str) {
+	long bytes;
+	char m, *p;
+
+	p = str + strlen(str)-1;
+	m = *p;
+
+	if ( m == 'G' ) { // Gibibytes (GiB)
+		*p = 0; bytes = labs( ((long) (atof(str) * 1024 * 1024 * 1024)) );
+	} else if ( m == 'M' ) { // Mebibytes (MiB)
+		*p = 0; bytes = labs( ((long) (atof(str) * 1024 * 1024)) );
+	} else if ( m == 'K' ) { // Kibibytes (KiB)
+		*p = 0; bytes = labs( ((long) (atof(str) * 1024)) );
+	} else { // default: Bytes (B)
+		if ( m == 'B' )
+			*p = 0;
+		bytes = labs( atol(str) );
+	}
+
+	return bytes;
 }
